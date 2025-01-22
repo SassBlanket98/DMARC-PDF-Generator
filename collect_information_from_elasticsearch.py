@@ -130,14 +130,16 @@ def generate_world_map(country_counts):
     plt.close(fig)
     return buffer
 
-def generate_pdf(records, output_folder = "reports", output_file="dmarc_report.pdf"):
-    # Create the output folder if it does not exist
+def generate_pdf(records, domain, output_folder="results"):
+    # Ensure the output folder exists
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-        
-    # Construct the full path for the PDF
+
+    # Construct the output file name and full path
+    sanitized_domain = domain.replace('.', '_')  # Replace dots in the domain for file naming
+    output_file = f"dmarc_report_{sanitized_domain}.pdf"
     full_path = os.path.join(output_folder, output_file)
-        
+
     pdf = FPDF()
     pdf.set_font("Arial", size=12)
     pdf.add_page()
@@ -163,12 +165,15 @@ def generate_pdf(records, output_folder = "reports", output_file="dmarc_report.p
 
     # Display summary
     pdf.multi_cell(0, 10, txt=f"Total Messages from: {total_messages}\n"
-                              f"Total DKIM Passed: {total_dkim_passed} : "
+                              f"Total DKIM Passed: {total_dkim_passed}"
+                              " : "
                               f"Total DKIM Failed: {total_dkim_failed}\n"
-                              f"Total SPF Passed: {total_spf_passed} : "
-                                f"Total SPF Failed: {total_spf_failed}\n"
-                              f"Total DMARC Passed: {total_dmarc_passed} : "
-                                f"Total DMARC Failed: {total_dmarc_failed}\n")
+                              f"Total SPF Passed: {total_spf_passed}"
+                              " : "
+                              f"Total SPF Failed: {total_spf_failed}\n"
+                              f"Total DMARC Passed: {total_dmarc_passed}"
+                              " : "
+                              f"Total DMARC Failed: {total_dmarc_failed}\n")
     pdf.ln(5)
 
     # Messages by Country Section
@@ -239,7 +244,6 @@ if __name__ == "__main__":
             print(record)
 
         # Generate the PDF report
-        output_file = f"dmarc_report_{domain.replace('.', '_')}.pdf"
-        generate_pdf(records, output_file)
+        generate_pdf(records, domain)
     else:
         print("No records found.")
