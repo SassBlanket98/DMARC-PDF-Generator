@@ -118,7 +118,11 @@ def generate_world_map(country_counts):
     world.plot(ax=ax, color="lightgrey")
 
     if not geo_df.empty:
-        scaled_sizes = [max(15, size * 15) for size in geo_df["size"]]  # Ensure a minimum size of 10
+        # Adjust the scaling factor for circle sizes
+        max_size = 5000  # Set a maximum size for the circles
+        min_size = 50   # Set a minimum size for the circles
+        scale_factor = 5  # Adjust this factor to scale the sizes appropriately
+        scaled_sizes = [max(min_size, min(max_size, size * scale_factor)) for size in geo_df["size"]]
         geo_df.plot(ax=ax, markersize=scaled_sizes, color="red", alpha=0.6)
 
     ax.set_title("Messages by Country", fontsize=16)
@@ -150,24 +154,24 @@ def generate_pdf(records, domain, output_folder="results"):
     pdf.ln(5)
 
     # General Summary Section
-    pdf.set_font("Arial", style="B", size=10)
+    pdf.set_font("Arial", style="BU", size=12)
     pdf.cell(200, 10, txt="General Overview", ln=True)
     pdf.set_font("Arial", size=10)
 
     # Calculate totals correctly
     total_messages = sum(record.get("message_count", 0) for record in records)
-    total_dkim_passed = sum(record.get("message_count", 0) for record in records if record.get("dkim_aligned", False))
+    total_dkim_aligned = sum(record.get("message_count", 0) for record in records if record.get("dkim_aligned", False))
     total_spf_passed = sum(record.get("message_count", 0) for record in records if record.get("spf_aligned", False))
     total_dmarc_passed = sum(record.get("message_count", 0) for record in records if record.get("passed_dmarc", False))
-    total_dkim_failed = sum(record.get("message_count", 0) for record in records if not record.get("dkim_aligned", False))
+    total_dkim_unaligned = sum(record.get("message_count", 0) for record in records if not record.get("dkim_aligned", False))
     total_spf_failed = sum(record.get("message_count", 0) for record in records if not record.get("spf_aligned", False))
     total_dmarc_failed = sum(record.get("message_count", 0) for record in records if not record.get("passed_dmarc", False))
 
     # Display summary
     pdf.multi_cell(0, 10, txt=f"Total Messages from: {total_messages}\n"
-                              f"Total DKIM Passed: {total_dkim_passed}"
+                              f"Total DKIM aligned: {total_dkim_aligned}"
                               " : "
-                              f"Total DKIM Failed: {total_dkim_failed}\n"
+                              f"Total DKIM unaligned: {total_dkim_unaligned}\n"
                               f"Total SPF Passed: {total_spf_passed}"
                               " : "
                               f"Total SPF Failed: {total_spf_failed}\n"
@@ -177,7 +181,7 @@ def generate_pdf(records, domain, output_folder="results"):
     pdf.ln(5)
 
     # Messages by Country Section
-    pdf.set_font("Arial", style="B", size=10)
+    pdf.set_font("Arial", style="BU", size=12)
     pdf.cell(200, 10, txt="Messages by Country", ln=True)
     pdf.set_font("Arial", size=10)
     country_counts = {}
@@ -202,7 +206,7 @@ def generate_pdf(records, domain, output_folder="results"):
 
         # Add a new page for Reporting Organizations
         pdf.add_page()
-        pdf.set_font("Arial", style="B", size=10)
+        pdf.set_font("Arial", style="BU", size=12)
         pdf.cell(200, 10, txt="Reporting Organizations", ln=True)
         pdf.set_font("Arial", size=10)
 
@@ -224,7 +228,13 @@ def generate_pdf(records, domain, output_folder="results"):
             pdf.multi_cell(0, 10, txt=f"Organization: {org_name}\n"
                                     f"Contact: {details['email']}\n"
                                     f"Messages: {details['messages']}\n")
-            pdf.ln(5)
+            
+            # Draw a line underneath each result
+            line_y = pdf.get_y()
+            pdf.line(10, line_y, 70, line_y)
+            # pdf.ln(5)
+            
+            
 
     # Save the PDF
     pdf.output(full_path)
