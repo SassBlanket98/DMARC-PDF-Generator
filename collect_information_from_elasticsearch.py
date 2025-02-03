@@ -243,7 +243,7 @@ def generate_pdf(records, domain, output_folder="results"):
 # Usage example
 if __name__ == "__main__":
     index_pattern = "dmarc_aggregate-*"  # Use a specific index pattern if necessary
-    days = 31  # Specify the number of days
+    days = 31 # Specify the number of days to search
     domain = input("Please enter the domain you wish to summarize: ")  # Replace with the specific domain
 
     records = collect_records(index_pattern, days, domain)
