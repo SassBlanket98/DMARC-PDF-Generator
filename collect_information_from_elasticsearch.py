@@ -148,14 +148,25 @@ def generate_pdf(records, domain, output_folder="results"):
     pdf.set_font("Arial", size=12)
     pdf.add_page()
 
+    # Add logo to the top left
+    logo_path = "Images/logo_non_interlaced.png"  # Update with the actual path to your logo
+    pdf.image(logo_path, x=5, y=5, w=60)  # Adjust x, y, and w as needed
+
+    # Add contact details to the top right
+    pdf.set_xy(5, 5)  # Adjust x and y as needed
+    pdf.set_font("Arial", size=10)
+    pdf.multi_cell(0, 5, "Contact Details:\nName: David Hill\nEmail: david@neozeit.com\nPhone: 061-058-4433", align="R")
+    
+
     # Title
+    pdf.set_xy(10, 25)  # Adjust y as needed to position below the logo and contact details
     pdf.set_font("Arial", style="BU", size=16)
     pdf.cell(200, 10, txt=f"DMARC Report Summary for: {domain}", ln=True, align="C")
     pdf.ln(5)
 
     # General Summary Section
     pdf.set_font("Arial", style="BU", size=12)
-    pdf.cell(200, 10, txt="General Overview", ln=True)
+    pdf.cell(200, 7.5, txt="General Overview", ln=True)
     pdf.set_font("Arial", size=10)
 
     # Calculate totals correctly
@@ -168,7 +179,7 @@ def generate_pdf(records, domain, output_folder="results"):
     total_dmarc_failed = sum(record.get("message_count", 0) for record in records if not record.get("passed_dmarc", False))
 
     # Display summary
-    pdf.multi_cell(0, 10, txt=f"Total Messages from: {total_messages}\n"
+    pdf.multi_cell(0, 7.5, txt=f"Total Messages from: {total_messages}\n"
                               f"Total DKIM aligned: {total_dkim_aligned}"
                               " : "
                               f"Total DKIM unaligned: {total_dkim_unaligned}\n"
@@ -182,7 +193,7 @@ def generate_pdf(records, domain, output_folder="results"):
 
     # Messages by Country Section
     pdf.set_font("Arial", style="BU", size=12)
-    pdf.cell(200, 10, txt="Messages by Country", ln=True)
+    pdf.cell(200, 7.5, txt="Messages by Country", ln=True)
     pdf.set_font("Arial", size=10)
     country_counts = {}
     for record in records:
@@ -193,7 +204,7 @@ def generate_pdf(records, domain, output_folder="results"):
     sorted_country_counts = sorted(country_counts.items(), key=lambda item: item[1], reverse=True)
 
     for country, count in sorted_country_counts:
-        pdf.cell(0, 10, txt=f"{country}: {count}", ln=True)
+        pdf.cell(0, 7.5, txt=f"{country}: {count}", ln=True)
     pdf.ln(-5)
 
     # Add the map visualization directly below the Messages by Country section
