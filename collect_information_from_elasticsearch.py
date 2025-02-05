@@ -218,7 +218,7 @@ def generate_pdf(records, domain, output_folder="results"):
         # Add a new page for Reporting Organizations
         pdf.add_page()
         pdf.set_font("Arial", style="BU", size=12)
-        pdf.cell(200, 10, txt="Reporting Organizations", ln=True)
+        pdf.cell(200, 7.5, txt="Reporting Organizations", ln=True)
         pdf.set_font("Arial", size=10)
 
         # Reporting Organizations Section
