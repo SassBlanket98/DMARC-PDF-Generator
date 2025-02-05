@@ -159,7 +159,7 @@ def generate_pdf(records, domain, output_folder="results"):
     
 
     # Title
-    pdf.set_xy(10, 25)  # Adjust y as needed to position below the logo and contact details
+    pdf.set_xy(10, 30)  # Adjust y as needed to position below the logo and contact details
     pdf.set_font("Arial", style="BU", size=16)
     pdf.cell(200, 10, txt=f"DMARC Report Summary for: {domain}", ln=True, align="C")
     pdf.ln(5)
@@ -205,7 +205,7 @@ def generate_pdf(records, domain, output_folder="results"):
 
     for country, count in sorted_country_counts:
         pdf.cell(0, 7.5, txt=f"{country}: {count}", ln=True)
-    pdf.ln(-5)
+    pdf.ln(0)
 
     # Add the map visualization directly below the Messages by Country section
     map_buffer = generate_world_map(country_counts)
@@ -236,7 +236,7 @@ def generate_pdf(records, domain, output_folder="results"):
         sorted_org_data = sorted(org_data.items(), key=lambda item: item[1]["messages"], reverse=True)
 
         for org_name, details in sorted_org_data:
-            pdf.multi_cell(0, 10, txt=f"Organization: {org_name}\n"
+            pdf.multi_cell(0, 7.5, txt=f"Organization: {org_name}\n"
                                     f"Contact: {details['email']}\n"
                                     f"Messages: {details['messages']}\n")
             
