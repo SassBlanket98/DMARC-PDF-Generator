@@ -191,7 +191,7 @@ def generate_pdf(records, domain, total_message_count, output_folder="results"):
     pdf.add_page()
 
     # Add logo to the top left
-    logo_path = "Images/logo_non_interlaced.png"  # Update with your logo path
+    logo_path = "Images/logo_non_interlaced.png"
     pdf.image(logo_path, x=5, y=5, w=60)
 
     # Add contact details to the top right
