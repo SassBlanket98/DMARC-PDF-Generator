@@ -242,7 +242,7 @@ def generate_pdf(records, domain, total_message_count, output_folder="results"):
     sorted_country_counts = sorted(country_counts.items(), key=lambda item: item[1], reverse=True)
     for country, count in sorted_country_counts:
         pdf.cell(0, 7.5, txt=f"{country}: {count}", ln=True)
-    pdf.ln(0)
+    pdf.ln(-5)
 
     # Add the map visualization below the Messages by Country section
     map_buffer = generate_world_map(country_counts)
